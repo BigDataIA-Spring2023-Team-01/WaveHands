@@ -12,7 +12,7 @@ st.set_page_config(
     page_icon="👋",
 )
 
-st.write("# Welcome to Streamlit! 👋")
+st.write("# WaveHands 👋")
+st.write("Bridging the gap between deaf and hearing world")
 
-# st.sidebar.success("Select a demo above.")
 
