@@ -13,6 +13,7 @@ USER_CREDENTIALS = {
     "user3": "password3"
 }
 
+PLANS = {"Free Tier", "Silver Tier", "Gold Tier", "Platinum Tier"}
 
 
 
