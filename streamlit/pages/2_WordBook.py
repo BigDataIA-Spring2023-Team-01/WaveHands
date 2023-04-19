@@ -23,6 +23,7 @@ def load_data(language):
 
     return data
 
+#selecting language and giving a word
 def word_book():
     st.title("Word-Book")
 
