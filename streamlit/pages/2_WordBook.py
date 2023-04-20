@@ -16,7 +16,7 @@ def load_data(language):
     if language == "American Sign Language":
         data = pd.read_csv("english_data.csv")
     elif language == "Indian Sign Language":
-        data = pd.read_csv("french_data.csv")
+        data = pd.read_csv("indian_data.csv")
     elif language == "Bengali Sign Language":
         data = pd.read_csv("bengali_data.csv")        
     #Add other languages as required and the csv of the respective files 
@@ -40,6 +40,7 @@ def word_book():
         else:
             st.write("No results found for the word '{}' in {}".format(word, language))
 
+# main function
 def main():
     word_book()
 
