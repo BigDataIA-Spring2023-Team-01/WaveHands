@@ -27,7 +27,7 @@ def load_data(language):
 def word_book():
     st.title("Word-Book")
 
-    language = st.selectbox("Select Sign Language Module", ("American Sign Language", "Indian Sign Language","Bengali Sign Language")) #Can Add other languages as required
+    language = st.selectbox("Select Sign Language Module", ("Select","American Sign Language", "Indian Sign Language","Bengali Sign Language")) #Can Add other languages as required
     word = st.text_input("Enter a Word")
 
     if st.button("Search"):
