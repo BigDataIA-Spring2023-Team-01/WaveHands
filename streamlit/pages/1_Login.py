@@ -48,16 +48,16 @@ def signup():
     selected_plan = st.radio("", list(subscription_plans.keys()))
 
     ## Can add this too for payment information 
-    # if selected_plan != "Free":
-    #     st.write("Enter your payment information:")
-    #     card_number = st.text_input("Card Number")
-    #     expiration_date = st.text_input("Expiration Date")
-    #     cvv = st.text_input("CVV")
-    #     confirm = st.checkbox("I confirm my subscription to {} plan for {}.".format(selected_plan, subscription_plans[selected_plan]))
-    #     if confirm:
-    #         st.success("Subscription confirmed")
-    #     else:
-    #         st.warning("Please confirm your subscription to proceed")
+    if selected_plan != "Free":
+        st.write("Enter your payment information:")
+        card_number = st.text_input("Card Number")
+        expiration_date = st.text_input("Expiration Date")
+        cvv = st.text_input("CVV")
+        confirm = st.checkbox("I confirm my subscription to {} plan for {}.".format(selected_plan, subscription_plans[selected_plan]))
+        if confirm:
+            st.success("Subscription confirmed")
+        else:
+            st.warning("Please confirm your subscription to proceed")
 
     
     username = st.text_input("Username")
