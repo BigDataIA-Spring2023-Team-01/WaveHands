@@ -6,7 +6,7 @@ import os
 import requests
 from dotenv import load_dotenv
 import boto3
-import pytube
+from pytube import YouTube
 load_dotenv()
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ load_dotenv()
 wavehands_bucket = os.environ.get('WAVEHANDS_BUCKET')
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY')
-UPLOAD_DIR = "data/audio_files"
+UPLOAD_DIR = "data/audio_files/raw_input"
 if not os.path.exists(UPLOAD_DIR):
             os.makedirs(UPLOAD_DIR)
 AIRFLOW_USERNAME = os.environ.get('AIRFLOW_USERNAME')
@@ -79,22 +79,23 @@ def main():
         upload = st.button('Upload file')
         if upload and sign_language:
              # Download the YouTube video
-            yt = pytube.YouTube(youtube_link)
-            audio = yt.streams.filter(only_audio=True).first()
+            yt = YouTube(youtube_link)
+            audio_stream = yt.streams.filter(only_audio=True).first()
             file_name = st.text_input('Enter a file name for the link','Default')
             
 
             # Save the audio file with a given name
             if file_name:
                 file_name = file_name + "_"+ sign_language + ".mp3"
-                file_path = UPLOAD_DIR
-                audio.download(output_path=file_path, filename=file_name)
-                st.write(f"Audio saved at {file_path}")
+                local_file_path = UPLOAD_DIR + "/" +file_name
+                audio_stream.download(output_path=UPLOAD_DIR, filename=file_name)
+                st.write(f"Audio saved at {UPLOAD_DIR}")
                 
                 # Upload the audio file to S3
                 s3_prefix = "raw_input/"
                 s3_file_key = s3_prefix + file_name
-                s3client.upload_file(file_path, wavehands_bucket, s3_file_key)
+                with open(local_file_path, 'rb') as f:
+                    s3client.put_object(Bucket=wavehands_bucket, Key=s3_file_key, Body=f)                
                 st.write(f"File uploaded to S3 bucket {wavehands_bucket} with key {s3_file_key}")
                 status = triggerDAG(file_name)
                 if status == 200:
