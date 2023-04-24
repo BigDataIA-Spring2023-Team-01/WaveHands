@@ -25,7 +25,6 @@ ALLOWED_SIGN_LANGUAGES = ["ASL","ISL","BSL"]
 #-------------------------------------------------------------------------------------------------------------------------------
 #Setting up functions
 
-# Trigger the process dag
 def triggerDAG(filename:str):
     url = os.environ.get("AIRFLOW_URL")
     auth = (AIRFLOW_USERNAME, AIRFLOW_PASSWORD)
@@ -35,6 +34,7 @@ def triggerDAG(filename:str):
     response = requests.post(url, headers=headers, json=data, auth=auth)
 
     return response.status_code
+
 
 
 def main():
@@ -53,7 +53,7 @@ def main():
 
         if upload and sign_language:
             #Adding sign language(ASL/ISL/BSL) to the end of file name
-            file_name = uploaded_file.name + "_"+ sign_language
+            file_name = uploaded_file.name.split(".")[0] + "_"+ sign_language + "." +uploaded_file.name.split(".")[1]
             s3_key = f'raw_input/{file_name}'
 
             with open(os.path.join(UPLOAD_DIR, file_name), "wb") as f:
@@ -65,6 +65,10 @@ def main():
             # Pass the contents of the file as bytes using the read() method
             file_contents = uploaded_file.read()
             s3client.put_object(Bucket=wavehands_bucket, Key=s3_key, Body=file_contents)
+            status = triggerDAG(file_name)
+            if status == 200:
+                st.write("DAG Triggered")
+
         else:
             st.warning("Please upload a file and select the language to translate to")
 
