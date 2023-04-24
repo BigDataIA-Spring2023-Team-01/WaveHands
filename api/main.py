@@ -73,17 +73,17 @@ async def search_video_ids(transcript: Transcript):
 @app.post("/video_merge")
 async def combine_videos(videos: Videos):
     final_video_bucket = 'wavehands'
-    local_save_path = 'data/archive/signlanguagevideos/'
+    local_save_path = 'data/audio_files/final_merged_video'
     video_list = videos.video_list
     clips = []
     for video in video_list:
-        file_path = f"data/kaggledataset/videos/{video}.mp4"
+        file_path = f"data/{videos.sign_language}/videos/{video}.mp4"
         clip = VideoFileClip(file_path)
         clip = clip.resize((1280, 720))  # resize to 720p
         clips.append(clip)
 
     result_clip = concatenate_videoclips(clips)
-    result_clip_name = str(uuid.uuid4()) + '.mp4'  # generate unique file name
+    result_clip_name = str(uuid.uuid4()) + "_"+videos.sign_language+ '.mp4'  # generate unique file name
     result_clip_path = local_save_path + result_clip_name
 
     # Save the final video locally

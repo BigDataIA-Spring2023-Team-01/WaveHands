@@ -6,6 +6,7 @@ import os
 import requests
 from dotenv import load_dotenv
 import boto3
+import pytube
 load_dotenv()
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -71,9 +72,35 @@ def main():
 
         else:
             st.warning("Please upload a file and select the language to translate to")
-    
-    if source == "Enter Youtube link":
-         st.text_input('Paste a Youtube Link')
-   
+
+    elif source == "Enter Youtube link":
+        youtube_link = st.text_input('Paste the youtube link here', 'www.youtube.com/xxx')
+        sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
+        upload = st.button('Upload file')
+        if upload and sign_language:
+             # Download the YouTube video
+            yt = pytube.YouTube(youtube_link)
+            audio = yt.streams.filter(only_audio=True).first()
+            file_name = st.text_input('Enter a file name for the link','Default')
+            
+
+            # Save the audio file with a given name
+            if file_name:
+                file_name = file_name + "_"+ sign_language + ".mp3"
+                file_path = UPLOAD_DIR
+                audio.download(output_path=file_path, filename=file_name)
+                st.write(f"Audio saved at {file_path}")
+                
+                # Upload the audio file to S3
+                s3_prefix = "raw_input/"
+                s3_file_key = s3_prefix + file_name
+                s3client.upload_file(file_path, wavehands_bucket, s3_file_key)
+                st.write(f"File uploaded to S3 bucket {wavehands_bucket} with key {s3_file_key}")
+                status = triggerDAG(file_name)
+                if status == 200:
+                    st.write("DAG Triggered")
+            else:
+                st.error("Please enter a file name to save the audio.")
+
 if __name__ == "__main__":
     main()

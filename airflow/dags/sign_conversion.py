@@ -19,7 +19,7 @@ wavehands_bucket = Variable.get('WAVEHANDS_BUCKET')
 token = Variable.get('OPENAI_SECRET_KEY')
 
 user_input = {
-        "filename": "Recording.mp3"
+        "filename": "Recording_ASL.mp3"
         }
 
 # Set up AWS clients
