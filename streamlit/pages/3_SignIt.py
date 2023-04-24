@@ -1,31 +1,73 @@
-#------------------------------------------------------------------------------------------------------------------------------
-# Importing Libraries 
-import streamlit as st 
-import time
-
-
-
-
 
 #-------------------------------------------------------------------------------------------------------------------------------
 #Fundamental template
 import streamlit as st
 import os
+import requests
+from dotenv import load_dotenv
+import boto3
+load_dotenv()
+
+#-------------------------------------------------------------------------------------------------------------------------------
+#Setting up Variables
+wavehands_bucket = os.environ.get('WAVEHANDS_BUCKET')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY')
+UPLOAD_DIR = "data/audio_files"
+if not os.path.exists(UPLOAD_DIR):
+            os.makedirs(UPLOAD_DIR)
+AIRFLOW_USERNAME = os.environ.get('AIRFLOW_USERNAME')
+AIRFLOW_PASSWORD = os.environ.get('AIRFLOW_PASSWORD')
+s3client = boto3.client('s3',region_name='us-east-1',
+                        aws_access_key_id = AWS_ACCESS_KEY_ID,
+                        aws_secret_access_key = AWS_SECRET_ACCESS_KEY)
+ALLOWED_SIGN_LANGUAGES = ["ASL","ISL","BSL"]
+#-------------------------------------------------------------------------------------------------------------------------------
+#Setting up functions
+
+# Trigger the process dag
+def triggerDAG(filename:str):
+    url = os.environ.get("AIRFLOW_URL")
+    auth = (AIRFLOW_USERNAME, AIRFLOW_PASSWORD)
+    headers = {"Content-Type": "application/json"}
+    data = {"conf": {"filename": filename}}
+
+    response = requests.post(url, headers=headers, json=data, auth=auth)
+
+    return response.status_code
 
 
 def main():
-    st.title("SignIt")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("## Upload an audio file")
-        uploaded_file = st.file_uploader("Choose a file", type=["mp3", "m4a"])
-    
-    with col2:
-        st.write("## Paste a YouTube Link")
-        youtubelink = st.text_input("Youtube Link", "")
-     
-    st.write("## Signed It ✅")
-    st.video("https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4")
+
+    st.title("SignIt:wind_blowing_face::ok_hand:")
+    st.header("Upload an audio file or Paste a youtube link")
+
+    source = st.radio("Select audio source", ("Upload file", "Enter Youtube link"))
+
+    #Upload File section (SignIt - Part 1)
+    if source == "Upload file":
+
+        uploaded_file = st.file_uploader("Upload an audio file (mp3, mp4, m4a)", type=["mp3", "mp4", "m4a"])
+        sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
+        upload = st.button('Upload file')
+
+        if upload and sign_language:
+            #Adding sign language(ASL/ISL/BSL) to the end of file name
+            file_name = uploaded_file.name + "_"+ sign_language
+            s3_key = f'raw_input/{file_name}'
+
+            with open(os.path.join(UPLOAD_DIR, file_name), "wb") as f:
+                f.write(uploaded_file.read())
+
+            st.success("File Uploaded successfully!")
+            st.audio(uploaded_file)
+            
+            # Pass the contents of the file as bytes using the read() method
+            file_contents = uploaded_file.read()
+            s3client.put_object(Bucket=wavehands_bucket, Key=s3_key, Body=file_contents)
+        else:
+            st.warning("Please upload a file and select the language to translate to")
+
    
 if __name__ == "__main__":
     main()

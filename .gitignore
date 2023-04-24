@@ -109,7 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+.wavehands
 
 # Spyder project settings
 .spyderproject
@@ -128,3 +128,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# Custom
+data/kaggledataset
+data/temp
+videos
+starry-folder-384401-d1659e74c9f0.json
