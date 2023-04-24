@@ -13,6 +13,8 @@ import cv2
 
 def main():
     st.title("HandSpeak")
+    options = ['American Sign Language', 'Indian Sign Language']
+    selected_option = st.selectbox('Select an option', options)
     run = st.checkbox('Start Recording')
     FRAME_WINDOW = st.image([])
     video_capture = cv2.VideoCapture(0)

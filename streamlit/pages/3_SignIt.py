@@ -71,7 +71,9 @@ def main():
 
         else:
             st.warning("Please upload a file and select the language to translate to")
-
+    
+    if source == "Enter Youtube link":
+         st.text_input('Paste a Youtube Link')
    
 if __name__ == "__main__":
     main()
