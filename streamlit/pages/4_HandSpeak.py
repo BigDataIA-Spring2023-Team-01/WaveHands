@@ -21,7 +21,10 @@ def main():
 
     while run:
         ret, frame = video_capture.read()
-        FRAME_WINDOW.image(frame)
+        b,g,r = cv2.split(frame)
+        b = cv2.equalizeHist(b) # Optional: adjust the intensity of the blue channel
+        merged = cv2.merge([r, g, b//2]) # Reduce the intensity of the blue channel by dividing it by 2
+        FRAME_WINDOW.image(merged)
     
     video_capture.release()
 
