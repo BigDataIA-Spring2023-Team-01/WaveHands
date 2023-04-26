@@ -88,9 +88,9 @@ async def combine_videos(videos: Videos):
     # Save the final video locally
     result_clip.write_videofile(result_clip_path)
 
-
+    s3key = "final_video_output/"+result_clip_name
  
-    s3.upload_file(result_clip_path, final_video_bucket, result_clip_name)
+    s3.upload_file(result_clip_path, final_video_bucket, s3key)
 
 
     return {"key_name": result_clip_name}

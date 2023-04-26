@@ -29,4 +29,7 @@ def main():
     video_capture.release()
 
 if __name__ == "__main__":
-    main()
+    if st.session_state.get('access_token'):
+        main()
+    else:
+        st.warning("Please login or sign up first")
