@@ -1,5 +1,4 @@
 from fastapi import FastAPI,APIRouter
-
 import pandas as pd
 from pydantic import ValidationError, BaseModel
 from moviepy.editor import VideoFileClip, concatenate_videoclips
@@ -9,6 +8,8 @@ from dotenv import load_dotenv
 import uuid
 import re
 import sqlite3
+from api import jwt
+
 load_dotenv()
 
 router_signconversion = APIRouter()
@@ -30,16 +31,17 @@ videos = [
 s3 = boto3.client('s3',region_name='us-east-1',
                             aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
                             aws_secret_access_key = os.environ.get('AWS_SECRET_KEY'))
-@router_signconversion.get("/videos")
 
-async def get_videos():
+
+@router_signconversion.get("/videos")
+async def get_videos(current_user: jwt.User = jwt.Depends(jwt.get_current_active_user)):
     df = pd.read_csv('data/features_df.csv')
-    return df.to_dict()
+    return df.head().to_dict()
 
 
 
 @router_signconversion.post("/search_video_ids")
-async def search_video_ids(transcript: Transcript):
+async def search_video_ids(transcript: Transcript,current_user: jwt.User = jwt.Depends(jwt.get_current_active_user)):
     conn = sqlite3.connect('data/metadata.db')
     c = conn.cursor()
 
@@ -70,7 +72,7 @@ async def search_video_ids(transcript: Transcript):
 
 
 @router_signconversion.post("/video_merge")
-async def combine_videos(videos: Videos):
+async def combine_videos(videos: Videos,current_user: jwt.User = jwt.Depends(jwt.get_current_active_user)):
     final_video_bucket = 'wavehands'
     local_save_path = 'data/audio_files/final_merged_video'
     video_list = videos.video_list

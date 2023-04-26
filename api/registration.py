@@ -54,7 +54,7 @@ async def register_user(user: User):
 
 
 @router_user.put("/update_password")
-async def update_password(data: Change_Password):
+async def update_password(data: Change_Password,current_user: jwt.User = jwt.Depends(jwt.get_current_active_user)):
    
     # Update the user's password in the dictionary
     # if username in users['username']:

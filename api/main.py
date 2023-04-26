@@ -14,5 +14,5 @@ app.include_router(registration.router_user)
 
 
 @app.get("/test")
-async def root():
+async def root(current_user: jwt.User = jwt.Depends(jwt.get_current_active_user)):
     return {"message": "Hello Bigger Applications!"}
