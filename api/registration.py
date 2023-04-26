@@ -1,15 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,APIRouter
 from pydantic import BaseModel
 import sqlite3
 
-app = FastAPI()
+router_registration = APIRouter()
 
 class User(BaseModel):
     username: str
     password: str
     email: str
 
-@app.post("/register")
+@router_registration.post("/register")
 def register(user: User):
     conn = sqlite3.connect('users.dbo')
     c = conn.cursor()
