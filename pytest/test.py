@@ -50,14 +50,8 @@ def test_get_videos():
 def test_search_video_ids():
   
     url = f"{ip}/search_video_ids"
-
-    # Create a sample transcript to use for testing
     sample_transcript = Transcript(transcript="This is a test transcript.", sign_language="ASL")
-
-    # Send a POST request with the sample transcript
     response = requests.post(url, json=sample_transcript.dict())
-
-    # Check that the response has a status code of 200 and returns a JSON object
     assert response.status_code == 200
    
 
