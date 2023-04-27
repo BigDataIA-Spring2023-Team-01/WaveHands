@@ -7,7 +7,7 @@ import requests
 from dotenv import load_dotenv
 import os
 from fastapi import Form
-
+import re
 load_dotenv()
 
 #------------------------------------------------------------------------------------------------------------------------------
@@ -23,8 +23,36 @@ def signup():
     st.title("Sign Up")
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
+    cc_number_pattern = r'^\d{16}$'
+    exp_date_pattern=r'^(0[1-9]|1[0-2])\/[0-9]{4}$'
+    cvv_pattern=r'^\d{3}$'
     confirm_password = st.text_input("Confirm Password", type="password")
     plan = st.selectbox("Plan", ["free", "gold", "platinum"])
+    if password!=confirm_password:
+        st.error("password and confirm password do not match")
+    if plan != "free":
+        st.write("Enter your payment information:")
+        card_number = st.text_input("Card Number")
+        if re.match(cc_number_pattern, card_number):
+            print("valid card number")
+        else:
+            st.error('Invalid Card Number')    
+        expiration_date = st.text_input("Expiration Date")
+        if re.match(exp_date_pattern, expiration_date):
+            print("valid Expiration Date")
+        else:
+            st.error('Invalid Expiration Date')
+        cvv = st.text_input("CVV")
+        if re.match(cvv_pattern, cvv):
+            print("valid CVV")
+        else:
+            st.error('Invalid CVV')
+        confirm = st.checkbox("I confirm my subscription to {} plan".format(plan))
+        if confirm:
+            st.success("Subscription confirmed")
+        else:
+            st.warning("Please confirm your subscription to proceed")
+
     if st.button("Register"):   
     
         url = API_URL + "register"
