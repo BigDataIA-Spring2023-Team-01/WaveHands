@@ -7,6 +7,7 @@ import requests
 from dotenv import load_dotenv
 import boto3
 from pytube import YouTube
+
 load_dotenv()
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -30,7 +31,8 @@ def triggerDAG(filename:str):
     url = os.environ.get("AIRFLOW_URL")
     auth = (AIRFLOW_USERNAME, AIRFLOW_PASSWORD)
     headers = {"Content-Type": "application/json"}
-    data = {"conf": {"filename": filename}}
+    jwttoken =st.session_state['access_token']
+    data = {"conf": {"filename": filename,"token":jwttoken}}
 
     response = requests.post(url, headers=headers, json=data, auth=auth)
 

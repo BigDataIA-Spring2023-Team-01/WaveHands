@@ -11,7 +11,7 @@ import requests
 import json
 from jose import jwt as jwt_pck
 import sqlite3
-
+import os
 #-------------------------------------------------------------------------------------------------------------------
 #                                Setting up variable
 #--------------------------------------------------------------------------------------------------------------------
@@ -39,7 +39,9 @@ s3_client = boto3.client('s3',
 #Function for task 0
 def read_token(**kwargs):
     token = kwargs['dag_run'].conf['token']
-    username = jwt_pck.decode(token, secret_key, algorithms=['HS256'])
+    payload = jwt_pck.decode(token, secret_key, algorithms=['HS256'])
+    username = payload.get('sub')
+    
     result = {"token": token, "username": username}
 
     kwargs['ti'].xcom_push(key='user_token', value=result)
@@ -48,7 +50,9 @@ def read_token(**kwargs):
 def check_current_user(**kwargs):
     result = kwargs['ti'].xcom_pull(key='user_token')
     username = result['username']
-    conn = sqlite3.connect('data/users.db')
+    conn = sqlite3.connect('/opt/airflow/users.db')
+
+
     c = conn.cursor()
     matching_rows = c.execute(f"SELECT plan FROM user_data WHERE username=?", (username,)).fetchone()
     plan = matching_rows[0]
@@ -63,16 +67,18 @@ def check_current_user(**kwargs):
     conn.commit()
     conn.close()
 
-    if(current_word_book_usage<word_book_limit):
-        return "Process to next task"
+    if(int(current_word_book_usage)<int(word_book_limit[0])):
+        return "update_user_count"
     else:
-        return "Request Limit reached"
+        return "limit_reached"
 
 def update_user_count(**kwargs):
 
     result = kwargs['ti'].xcom_pull(key='user_token')
     username = result['username']
-    conn = sqlite3.connect('data/users.db')
+    conn = sqlite3.connect('/opt/airflow/users.db')
+
+
     c = conn.cursor()   
     c.execute(f"UPDATE user_current_usage SET word_book_currentcount = CAST(word_book_currentcount AS INTEGER) + 1 WHERE username=?", (username,))
     conn.commit()
@@ -122,7 +128,7 @@ def video_ids(transcript,**kwargs):
     response = requests.post(url,json={"transcript": transcript, "sign_language":sign_language},headers=jwttoken)
     if response.status_code == 200:
         video_list = json.loads(response.text)
-        return video_list
+        return video_list['video']
     else:
         return []
     
@@ -130,10 +136,11 @@ def video_ids(transcript,**kwargs):
 def merge_videos(video_list,**kwargs):
     API_URL = "http://fastapi.latest:8000"
     url = f"{API_URL}/video_merge"
+    token = kwargs['dag_run'].conf['token']
     sign_language = kwargs['dag_run'].conf['filename'].split(".")[0].split("_")[1]
-    jwttoken ={"Authorization": f"Bearer {kwargs['dag_run'].conf['token']}"}
-
-    response = requests.post(url,json={"video_list": video_list,"sign_language":sign_language},headers=jwttoken)
+    jwttoken ={"Authorization": f"Bearer {token}"}
+    video_list_json = json.loads(video_list)
+    response = requests.post(url,json={"video_list": video_list_json,"sign_language":sign_language},headers=jwttoken)
     if response.status_code == 200:
         res = json.loads(response.text)
         return res['key_name']
