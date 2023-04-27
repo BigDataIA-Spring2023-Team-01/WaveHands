@@ -15,9 +15,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-conn = sqlite3.connect('data/users.db')
-db = Database(conn)
-cursor = conn.cursor()
+
 
 class Token(BaseModel):
     access_token: str
@@ -57,11 +55,10 @@ def get_password_hash(password):
 
 
 def get_user(conn, username: str): 
-
+    db = Database(conn)
     query = 'select * from user_data where username = ?'
     results = next(db.query(query,(username,)))
     conn.commit()
-    conn.close()
     return UserInDB(**results)
 
 
@@ -92,6 +89,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        conn = sqlite3.connect('data/users.db')
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
@@ -100,6 +98,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except JWTError:
         raise credentials_exception
     user = get_user(conn, username=token_data.username)
+    conn.close()
     if user is None:
         raise credentials_exception
     return user
@@ -116,6 +115,7 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 @router_jwt.post('/token', response_model=Token)
 async def login_for_access_token(input: OAuth2PasswordRequestForm = Depends()):
     time.sleep(2)
+    conn = sqlite3.connect('data/users.db')
     user = authenticate_user(conn, input.username, input.password)
     if not user:
         raise HTTPException(
@@ -127,6 +127,7 @@ async def login_for_access_token(input: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    conn.close()
     return {"access_token": access_token, "token_type": "bearer"}
 
 
