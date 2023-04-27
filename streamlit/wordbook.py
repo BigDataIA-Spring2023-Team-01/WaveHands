@@ -217,22 +217,22 @@ plan1_paths = f"/Users/andy/Documents/GitHub/WaveHands/ASL_Wordbook/set{plan_num
 # initialize variables
 video_idx = 0
 video_files = []
-answer = ''
 
 # define function to show video and get user input
+
+
+video_files = []
+for filename in os.listdir(plan1_paths):
+    if filename.endswith('.mp4'):
+        filepath = os.path.join(plan1_paths, filename)
+        video_files.append(filepath)
+
+    # shuffle video files
+random.shuffle(video_files)
+
+# display video
 def show_video():
-    global video_idx, video_files, answer
-
-    video_files = []
-    for filename in os.listdir(plan1_paths):
-        if filename.endswith('.mp4'):
-            filepath = os.path.join(plan1_paths, filename)
-            video_files.append(filepath)
-
-        # shuffle video files
-        random.shuffle(video_files)
-
-    # display video
+    global video_idx
     st.video(video_files[video_idx])
 
     # extract filename "word" from video path
@@ -252,7 +252,7 @@ def show_video():
             video_idx += 1
         else:
             st.error('Not matched. Please try again.')
-
+            
 # define streamlit app layout
 st.title('ASL Wordbook')
 col1, col2 = st.columns([1, 2])
