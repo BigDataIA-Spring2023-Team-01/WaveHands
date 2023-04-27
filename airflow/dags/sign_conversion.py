@@ -12,6 +12,8 @@ import json
 from jose import jwt as jwt_pck
 import sqlite3
 import os
+import pytz
+
 #-------------------------------------------------------------------------------------------------------------------
 #                                Setting up variable
 #--------------------------------------------------------------------------------------------------------------------
@@ -51,6 +53,7 @@ def check_current_user(**kwargs):
     result = kwargs['ti'].xcom_pull(key='user_token')
     username = result['username']
     conn = sqlite3.connect('/opt/airflow/users.db')
+    tz = pytz.timezone('US/Eastern')
 
 
     c = conn.cursor()
@@ -59,10 +62,13 @@ def check_current_user(**kwargs):
     word_book_limit = c.execute(f"SELECT word_book FROM plan_details WHERE plan=?", (plan,)).fetchone()
 
     current_word_book_usage,word_book_lastused = c.execute(f"SELECT word_book_currentcount,word_book_lastused FROM user_current_usage WHERE username=?", (username,)).fetchone()
-    is_within_last_hour = (datetime.now() - datetime.strptime(word_book_lastused, '%Y-%m-%d %H:%M:%S')) < timedelta(hours=1)
+    word_book_lastused_tz = datetime.strptime(word_book_lastused, '%Y-%m-%d %H:%M:%S').replace(tzinfo=tz)
+
+    is_within_last_hour = (datetime.now(tz) - word_book_lastused_tz) < timedelta(hours=1)
     
-    if(is_within_last_hour):
-        c.execute(f"UPDATE user_current_usage SET word_book_currentcount = 0 WHERE username=?", (username,))     
+    if(not is_within_last_hour):
+        c.execute(f"UPDATE user_current_usage SET word_book_currentcount = 0 WHERE username=?", (username,))    
+   
 
     conn.commit()
     conn.close()
@@ -76,11 +82,15 @@ def update_user_count(**kwargs):
 
     result = kwargs['ti'].xcom_pull(key='user_token')
     username = result['username']
+    tz = pytz.timezone('US/Eastern')
     conn = sqlite3.connect('/opt/airflow/users.db')
+    now = datetime.datetime.now(tz)
 
 
     c = conn.cursor()   
     c.execute(f"UPDATE user_current_usage SET word_book_currentcount = CAST(word_book_currentcount AS INTEGER) + 1 WHERE username=?", (username,))
+ 
+    c.execute("UPDATE user_current_usage SET word_book_lastused = ? WHERE username = ?", (now, username))
     conn.commit()
     conn.close()
 

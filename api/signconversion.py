@@ -74,7 +74,7 @@ async def search_video_ids(transcript: Transcript,current_user: jwt.User = jwt.D
 @router_signconversion.post("/video_merge")
 async def combine_videos(videos: Videos,current_user: jwt.User = jwt.Depends(jwt.get_current_active_user)):
     final_video_bucket = 'wavehands'
-    local_save_path = 'data/audio_files/final_merged_video'
+    local_save_path = 'data/audio_files/final_merged_video/'
     video_list = videos.video_list
     clips = []
     for video in video_list:

@@ -72,6 +72,8 @@ def main():
                 status = triggerDAG(file_name)
                 if status == 200:
                     st.write("DAG Triggered")
+                    # if st.button("Check status"):
+                        
 
             else:
                 st.warning("Please upload a file and select the language to translate to")
