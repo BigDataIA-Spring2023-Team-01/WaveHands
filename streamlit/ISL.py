@@ -16,14 +16,14 @@ def display_images(set_path):
     for i in range(0, len(images), 2):
         col1, col2 = st.columns(2)
         image1 = os.path.join(set_path, images[i])
-        print(image1)
+        
         col1.image(image1, use_column_width=True)
         col1_textbox = col1.text_input(label="Enter the word for this image", key=i)
         user_input[i] = col1_textbox
         
         if i+1 < len(images):
             image2 = os.path.join(set_path, images[i+1])
-            print(image2)
+            
             col2.image(image2, use_column_width=True)
             col2_textbox = col2.text_input(label="Enter the word for this image", key=i+1)
             user_input[i+1] = col2_textbox
@@ -36,6 +36,7 @@ def check_answers(set_path, user_input):
     for i in range(0, len(images)):
         img_name, img_ext = os.path.splitext(images[i])
         img_answer = img_name.split("_")[1]
+        
         user_answer = user_input.get(i, "")
         result = img_answer == user_answer
         results.append(result)
@@ -56,22 +57,22 @@ def app():
         plan_number = "set1"
     elif bank == "Easy Level 1":
         plan_number = "set2"
-    # elif bank == "Easy Level 2":
-    #     plan_number = 3
-    # elif bank == "Medium Level 1":
-    #     plan_number = 4
-    # elif bank == "Medium Level 2":
-    #     plan_number = 5
-    # elif bank == "Medium Level 3":
-    #     plan_number = 6
-    # elif bank == "Difficult Level 1":
-    #     plan_number = 7
-    # elif bank == "Difficult Level 2":
-    #     plan_number = 8
-    # elif bank == "Difficult Level 3":
-    #     plan_number = 9
+    elif bank == "Easy Level 2":
+        plan_number = "set3"
+    elif bank == "Medium Level 1":
+        plan_number = "set4"
+    elif bank == "Medium Level 2":
+        plan_number = "set5"
+    elif bank == "Medium Level 3":
+        plan_number = "set6"
+    elif bank == "Difficult Level 1":
+        plan_number = "set7"
+    elif bank == "Difficult Level 2":
+        plan_number = "set8"
+    elif bank == "Difficult Level 3":
+        plan_number = "set9"
     # Select the set number
-    # selected_set = bank
+    selected_set = bank
     
     # Set the path for the selected sign language and set number
     set_path = os.path.join("ISL_Wordbook", f"{plan_number}_videos")
