@@ -166,7 +166,7 @@ def main():
                 # Download the YouTube video
                 # Save the audio file with a given name
                 if file_name:
-                    file_name = file_name + "_"+ sign_language + ".mp3"
+                    file_name = file_name + "_"+ sign_language
                     local_file_path = UPLOAD_DIR + "/" +file_name
                     download_yt_video(youtube_link,file_name)
                     st.write(f"Audio saved at {UPLOAD_DIR}")
