@@ -1,14 +1,8 @@
 import math
-import urllib.request
 
-IMAGE_FILENAMES = ['test1.jpg', 'test2.jpg', 'test3.jpg']
+IMAGE_FILENAMES = ['1_010.jpeg', '2_031.jpeg', '3_026.jpeg', '4_024.jpeg']
 
-# for name in IMAGE_FILENAMES:
-#   url = f'https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/{name}'
-#   urllib.request.urlretrieve(url, name)
 
-#---------------------------------------------------------------------------------------------------------------------------------------
-#@markdown We implemented some functions to visualize the gesture recognition results. <br/> Run the following cell to activate the functions.
 from matplotlib import pyplot as plt
 import mediapipe as mp
 from mediapipe.framework.formats import landmark_pb2
