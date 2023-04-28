@@ -8,6 +8,12 @@ set_path = None
 
 # Create a dictionary to store user inputs
 user_input = {}
+img_displayed_order={}
+
+def extract_names_from_filename (s):
+    fname = s.split("/")[2]
+    char = fname.split("_")[0]
+    return char
 
 # Define a function to display the images and text inputs
 def display_images(set_path):
@@ -16,30 +22,30 @@ def display_images(set_path):
     for i in range(0, len(images), 2):
         col1, col2 = st.columns(2)
         image1 = os.path.join(set_path, images[i])
-        
+        print(image1)
         col1.image(image1, use_column_width=True)
+        img_displayed_order[i]=extract_names_from_filename(image1)
         col1_textbox = col1.text_input(label="Enter the word for this image", key=i)
         user_input[i] = col1_textbox
         
         if i+1 < len(images):
             image2 = os.path.join(set_path, images[i+1])
-            
+            print(image2)
             col2.image(image2, use_column_width=True)
+            img_displayed_order[i+1]=extract_names_from_filename(image2)
             col2_textbox = col2.text_input(label="Enter the word for this image", key=i+1)
             user_input[i+1] = col2_textbox
+    
+    print("img_displayed_order({}): {}".format(type(img_displayed_order),img_displayed_order))
+
+
 
 # Define a function to check user input against the image filenames
 def check_answers(set_path, user_input):
-    images = os.listdir(set_path)
-    images = [img for img in images if img.endswith(".jpeg")]
+    print("user_input({}): {}".format(type(user_input),user_input))
     results = []
-    for i in range(0, len(images)):
-        img_name, img_ext = os.path.splitext(images[i])
-        img_answer = img_name.split("_")[1]
-        
-        user_answer = user_input.get(i, "")
-        result = img_answer == user_answer
-        results.append(result)
+    for (set_i, set_n), (input_i, input_n) in zip(img_displayed_order.items(), user_input.items()):
+        results.append(set_n == input_n.upper())
     return results
 
 # Define the Streamlit app
