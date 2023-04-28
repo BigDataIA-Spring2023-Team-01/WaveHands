@@ -70,7 +70,11 @@ this folder contains code for airflow DAG for processing audio files and convert
 Contribution
 
 Anandita Deb : 25%
+
 Cheril Yogi :25%
+
 Shamin Chokshi :25%
+
 Thejas Bharadwaj :25%
+
 WE ATTEST THAT WE HAVEN'T USED ANY OTHER STUDENT'S WORK IN OUR ASSIGNMENT AND ABIDE BY THE POLICIES LISTED IN THE STUDENT HANDBOOK.
