@@ -177,7 +177,7 @@ def main():
                     with open(f"{local_file_path}.m4a", 'rb') as f:
                         s3client.put_object(Bucket=wavehands_bucket, Key=s3_file_key, Body=f)                
                     st.write(f"File uploaded to S3 bucket {wavehands_bucket} with key {s3_file_key}")
-                    status = triggerDAG(file_name)
+                    status = triggerDAG(f"{file_name}.m4a")
                     if status == 200:
                         st.write("DAG Triggered")
                 else:
