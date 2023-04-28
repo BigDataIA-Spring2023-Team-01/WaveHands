@@ -25,7 +25,7 @@ Steps:
 2. Browse the location where you want to clone the repository
 3. Write the following command and press enter
 ``````````````````````````````````````````````````````````````````````````
-    git clone https://github.com/BigDataIA-Spring2023-Team-01/SignIt.git
+    git clone https://github.com/BigDataIA-Spring2023-Team-01/WaveHands.git
 ``````````````````````````````````````````````````````````````````````````
 4. Now we need to run the following command which will download the dataset from kaggle that we are using to generate the sign language videos.
 
