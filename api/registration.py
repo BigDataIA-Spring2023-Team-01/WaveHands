@@ -41,7 +41,11 @@ async def register_user(user: User):
 
     try:
         query = "INSERT INTO USER_DATA (username, email, password, status, role, plan, register_time) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        query1 = "INSERT INTO user_current_usage VALUES(?,'0','0','0','2023-04-27 19:34:57.473330-04:00','2023-04-27 19:34:57.473330-04:00','2023-04-27 19:34:57.473330-04:00')"
+
         c.execute(query, (user.username,User_Details.email,User_Details.hashed_password,User_Details.status,User_Details.role,user.plan,User_Details.register_time))
+        c.execute(query1, (user.username,))
+
         conn.commit()
         conn.close()
         return {"Success"}
