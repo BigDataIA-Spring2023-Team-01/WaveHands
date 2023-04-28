@@ -98,9 +98,9 @@ def app():
         results = check_answers(set_path, user_input)
         for i in range(len(results)):
             if results[i]:
-                st.write(f"Image {i+1} is CORRECT!")
+                st.write(f"Video {i+1} is CORRECT!")
             else:
-                st.write(f"Image {i+1} is INCORRECT.")
+                st.write(f"Video {i+1} is INCORRECT.")
     
     # Save the current set as the last set
     st.session_state.last_set = selected_set
