@@ -81,7 +81,7 @@ def app():
     selected_set = bank
     
     # Set the path for the selected sign language and set number
-    set_path = os.path.join("ISL_Wordbook", f"{plan_number}_videos")
+    set_path = os.path.join("streamlit/ISL_Wordbook", f"{plan_number}_videos")
     
     # Check if the set has been changed
     if "last_set" not in st.session_state:
@@ -111,69 +111,4 @@ if __name__ == "__main__":
 
 
 
-# import os
-# import random
-# import streamlit as st
-
-# def display_images(set_path):
-#     # get list of image files
-#     image_files = []
-#     for filename in os.listdir(set_path):
-#         if filename.endswith('.jpeg'):
-#             filepath = os.path.join(set_path, filename)
-#             image_files.append(filepath)
-
-#     # randomly select 4 images to display
-#     selected_images = random.sample(image_files, 4)
-
-#     # display the images and input boxes
-#     for i in range(2):
-#         col1, col2 = st.columns(2)
-#         with col1:
-#             alphabet = os.path.splitext(os.path.basename(selected_images[i*2]))[0].split("_")[0]
-#             print(alphabet)
-#             st.image(selected_images[i*2], width=200)
-#             input_text = st.text_input(f"Enter the alphabet or digit in the image {i*2+1}:", key=f"input_text{i*2}")
-#             if st.session_state.get(f"input_text{i*2}_submitted"):
-#                 st.success('Submitted!')
-#             elif st.session_state.get(f"input_text{i*2}_error"):
-#                 st.error('Please try again.')
-#             elif input_text:
-#                 if input_text.lower() == alphabet.lower():
-#                     st.success('Correct!')
-#                     st.session_state[f"input_text{i*2}_submitted"] = True
-#                 else:
-#                     st.error('Please try again.')
-#                     st.session_state[f"input_text{i*2}_error"] = True
-#             else:
-#                 st.session_state[f"input_text{i*2}_submitted"] = False
-#                 st.session_state[f"input_text{i*2}_error"] = False
-#         with col2:
-#             alphabet = os.path.splitext(os.path.basename(selected_images[i*2+1]))[0].split("_")[0]
-#             print(alphabet)
-#             st.image(selected_images[i*2+1], width=200)
-#             input_text = st.text_input(f"Enter the alphabet or digit in the image {i*2+2}:", key=f"input_text{i*2+1}")
-#             if st.session_state.get(f"input_text{i*2+1}_submitted"):
-#                 st.success('Submitted!')
-#             elif st.session_state.get(f"input_text{i*2+1}_error"):
-#                 st.error('Please try again.')
-#             elif input_text:
-#                 if input_text.lower() == alphabet.lower():
-#                     st.success('Correct!')
-#                     st.session_state[f"input_text{i*2+1}_submitted"] = True
-#                 else:
-#                     st.error('Please try again.')
-#                     st.session_state[f"input_text{i*2+1}_error"] = True
-#             else:
-#                 st.session_state[f"input_text{i*2+1}_submitted"] = False
-#                 st.session_state[f"input_text{i*2+1}_error"] = False
-
-
-# # main program
-# language = st.selectbox("Select Sign Language", ["ISL"])
-# set_num = st.selectbox("Select Set", ["set1", "set2", "set3", "set4", "set5", "set6", "set7", "set8", "set9"])
-
-# set_path = os.path.join(f"./{language}_Wordbook", f"{set_num}_videos")
-
-# display_images(set_path)
 
