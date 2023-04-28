@@ -18,8 +18,8 @@ load_dotenv()
 API_URL = os.environ.get('API_URL')
 clientLogs = boto3.client('logs',
                         region_name='us-east-1',
-                        aws_access_key_id = os.environ.get('AWS_LOG_ACCESS_KEY'),
-                        aws_secret_access_key = os.environ.get('AWS_LOG_SECRET_KEY')
+                        aws_access_key_id = os.environ.get('AWS_ACCESS_KEY'),
+                        aws_secret_access_key = os.environ.get('AWS_SECRET_KEY')
                         )
 #------------------------------------------------------------------------------------------------------------------------------
 #                                       Function Definitions

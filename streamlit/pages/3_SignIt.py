@@ -31,8 +31,8 @@ s3client = boto3.client('s3',region_name='us-east-1',
                         aws_secret_access_key = AWS_SECRET_ACCESS_KEY)
 clientLogs = boto3.client('logs',
                         region_name='us-east-1',
-                        aws_access_key_id = os.environ.get('AWS_LOG_ACCESS_KEY'),
-                        aws_secret_access_key = os.environ.get('AWS_LOG_SECRET_KEY')
+                        aws_access_key_id = AWS_ACCESS_KEY_ID,
+                        aws_secret_access_key = AWS_SECRET_ACCESS_KEY
                         )
 ALLOWED_SIGN_LANGUAGES = ["ASL","ISL","BSL"]
 if "current_remaining_calls" not in st.session_state:
