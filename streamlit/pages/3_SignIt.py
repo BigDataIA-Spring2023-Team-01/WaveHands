@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 import boto3
 from pytube import YouTube
 import sqlite3
+import yt_dlp
+
 load_dotenv()
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -71,6 +73,20 @@ def get_current_user_calls():
     conn.commit()
     conn.close()
 
+    
+def download_yt_video(video_url,filename):
+    ydl_opts = {
+        'format': 'm4a/bestaudio/best',
+        'outtmpl': f"{UPLOAD_DIR}/{filename}.%(ext)s",
+        'postprocessors': [{ 
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'm4a' ,
+                }]
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        error_code = ydl.download(video_url)
+
 #------------------------------------------------------------------------------------------------------------------
 
 def main():
@@ -124,15 +140,11 @@ def main():
             upload = st.button('Upload file')
             if upload and sign_language:
                 # Download the YouTube video
-                yt = YouTube(youtube_link)
-                audio_stream = yt.streams.filter(only_audio=True).first()
-                
-
                 # Save the audio file with a given name
                 if file_name:
                     file_name = file_name + "_"+ sign_language + ".mp3"
                     local_file_path = UPLOAD_DIR + "/" +file_name
-                    audio_stream.download(output_path=UPLOAD_DIR, filename=file_name)
+                    download_yt_video(youtube_link,file_name)
                     st.write(f"Audio saved at {UPLOAD_DIR}")
                     
                     # Upload the audio file to S3
