@@ -14,17 +14,17 @@ ip=os.environ.get("LOCALHOST_FASTAPI_URL")
 #-----------------------------------------------------------------------------------------------------------------------------------------
 # tests
 
-#def test_whisper_api_up():
-#    headers = {
-#      'Authorization': 'Bearer ' + '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'
-#    }
-#    payload={'model': 'whisper-1','response_format':'json'}
-#    url = "https://api.openai.com/v1/audio/transcriptions"
-#    response = requests.request("POST", url, headers=headers, data=payload)
-#
-#    response_json = response.json()
-#    print(response_json)
-#    assert response.status_code == 400
+def test_whisper_api_up():
+    headers = {
+      'Authorization': 'Bearer ' + token
+    }
+    payload={'model': 'whisper-1','response_format':'json'}
+    url = "https://api.openai.com/v1/audio/transcriptions"
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    response_json = response.json()
+    print(response_json)
+    assert response.status_code == 401
 
 class Transcript(BaseModel):
     transcript: str
@@ -32,8 +32,8 @@ class Transcript(BaseModel):
 
 
 user_data = {
-    "username": "s",
-    "password": "s",
+    "username": "ley",
+    "password": "foo",
     "plan": "free",
    
 }
@@ -67,7 +67,6 @@ def test_login_for_access_token():
     
     
 
-#jwttoken ={"Authorization": f"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGFtaW4iLCJleHAiOjE2ODI1NzE1NzB9.45HAg3A1JYVi7oAaZ5nsSicm3vZ9oE08I5suC1qyGpE"}
 
 
 def test_register_endpoint():
@@ -88,5 +87,10 @@ def test_search_video_ids():
     assert response.status_code == 200
    
 
-    
 
+def test_update_password():
+    
+    data = {"username": "shamin", "password": "shamin", "confirm_password": "shamin"}
+    response = requests.put(f"{ip}update_password", json=data,  headers=jwttoken)
+    assert response.status_code == 200
+    
