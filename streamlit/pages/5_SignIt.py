@@ -80,13 +80,15 @@ def callback():
 
 def get_current_user_calls():
     conn = sqlite3.connect("data/users.db")
-    username = st.session_state.user
     c = conn.cursor()
     count = c.execute("SELECT word_book_currentcount from user_current_usage where username = ?",(username,)).fetchall()
-    st.session_state.current_remaining_calls = count
+    username = st.session_state.user
+    st.session_state.current_remaining_calls = count[0]
+    st.write(f"Current API Counter:{st.session_state.current_remaining_calls[0]}")
+    if(int(count[0][0]) > 2):
+        st.warning("Your free plan has expired, please consider upgrading to gold or platinum")
     conn.commit()
     conn.close()
-
     
 def download_yt_video(video_url,filename):
     ydl_opts = {
@@ -107,9 +109,7 @@ def main():
 
     st.title("SignIt:wind_blowing_face::ok_hand:")
     st.header("Upload an audio file or Paste a youtube link")
-    # remaining_api_calls = 1
-    # get_current_user_calls()
-    # st.write("Remaining API Calls:", st.session_state.current_remaining_calls)
+    get_current_user_calls()
     
     col1, col2 = st.columns(2)
     with col1:

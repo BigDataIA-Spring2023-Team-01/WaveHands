@@ -107,7 +107,10 @@ def app():
 
 # Run the app
 if __name__ == "__main__":
-    app()
+    if st.session_state.get('access_token'):
+        app()
+    else:
+        st.warning("Please login or sign up first")
 
 
 

@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import sqlite3
 
 # Set the path for the selected sign language and set number
 selected_set = None
@@ -47,13 +48,23 @@ def check_answers(set_path, user_input):
     for (set_i, set_n), (input_i, input_n) in zip(img_displayed_order.items(), user_input.items()):
         results.append(set_n == input_n.upper())
     return results
-
+def get_current_user_calls():
+    conn = sqlite3.connect("data/users.db")
+    c = conn.cursor()
+    count = c.execute("SELECT word_book_currentcount from user_current_usage where username = ?",(username,)).fetchall()
+    username = st.session_state.user
+    st.session_state.current_remaining_calls = count[0]
+    st.write(f"Current API Counter:{st.session_state.current_remaining_calls[0]}")
+    if(int(count[0][0]) > 2):
+        st.warning("Your free plan has expired, please consider upgrading to gold or platinum")
+    conn.commit()
+    conn.close()
 # Define the Streamlit app
 def app():
     global selected_set, selected_lang, set_path
     
     st.title("ISL Wordbook")
-    
+    get_current_user_calls()
     # Select the sign language
     selected_lang = st.selectbox("Select sign language", ["Indian Sign Language"])
     difficulty = ["Learn the alphabet", "Easy Level 1","Easy Level 2","Medium Level 1","Medium Level 2","Medium Level 3","Difficult Level 1","Difficult Level 2","Difficult Level 3"]
@@ -107,7 +118,10 @@ def app():
 
 # Run the app
 if __name__ == "__main__":
-    app()
+    if st.session_state.get('access_token'):
+        app()
+    else:
+        st.warning("Please login or sign up first")
 
 
 
