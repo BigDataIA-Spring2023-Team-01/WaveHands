@@ -67,7 +67,7 @@ def get_current_user_calls():
     username = st.session_state.user
     c = conn.cursor()
     count = c.execute("SELECT word_book_currentcount from user_current_usage where username = ?",(username,)).fetchall()
-    st.session_state.current_remaining_calls = int(count[0])
+    st.session_state.current_remaining_calls = count
     conn.commit()
     conn.close()
 
@@ -77,9 +77,9 @@ def main():
 
     st.title("SignIt:wind_blowing_face::ok_hand:")
     st.header("Upload an audio file or Paste a youtube link")
-    remaining_api_calls = 1
-    get_current_user_calls()
-    st.write("Remaining API Calls:", st.session_state.current_remaining_calls)
+    # remaining_api_calls = 1
+    # get_current_user_calls()
+    # st.write("Remaining API Calls:", st.session_state.current_remaining_calls)
     
     col1, col2 = st.columns(2)
     with col1:
@@ -109,7 +109,7 @@ def main():
                 status = triggerDAG(file_name)
                 if status == 200:
                     st.write("DAG Triggered")
-                    st.session_state.current_remaining_calls = st.session_state.current_remaining_calls + 1
+                    # st.session_state.current_remaining_calls = st.session_state.current_remaining_calls + 1
 
                 
 
