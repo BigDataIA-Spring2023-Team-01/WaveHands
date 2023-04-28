@@ -31,7 +31,7 @@ def main():
         url = API_URL + 'predict_image'
         response = requests.post(url,params={"IMAGE_FILENAMES":image_ml})
         if response.status_code == 200:
-            st.image("my_plot.png")
+            st.image("data/my_plot.png")
 
 if __name__ == "__main__":
     if st.session_state.get('access_token'):
