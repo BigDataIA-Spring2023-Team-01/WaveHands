@@ -55,7 +55,7 @@ def app():
     st.title("ISL Wordbook")
     
     # Select the sign language
-    selected_lang = st.selectbox("Select sign language", ["ISL"])
+    selected_lang = st.selectbox("Select sign language", ["Indian Sign Language"])
     difficulty = ["Learn the alphabet", "Easy Level 1","Easy Level 2","Medium Level 1","Medium Level 2","Medium Level 3","Difficult Level 1","Difficult Level 2","Difficult Level 3"]
     bank = st.selectbox("Select level for questions", difficulty)
 
