@@ -11,7 +11,7 @@ user_input = {}
 img_displayed_order={}
 
 def extract_names_from_filename (s):
-    fname = s.split("/")[2]
+    fname = s.split("/")[3]
     char = fname.split("_")[0]
     return char
 
