@@ -22,7 +22,7 @@ Steps:
 ``````````````````````````````````````````````````````````````````````````
     git clone https://github.com/BigDataIA-Spring2023-Team-01/SignIt.git
 ``````````````````````````````````````````````````````````````````````````
-4.Now we need to run the following command which will download the dataset from kaggle that we are using to generate the sign language videos.
+4. Now we need to run the following command which will download the dataset from kaggle that we are using to generate the sign language videos.
 
 ``````````````````````````
 python3 db_metadata.py
@@ -33,7 +33,7 @@ python3 dataset_download.py
 
 Note: This will download around 5GB of dataset to the data/ directory. This will be needed to create the sign language videos. Always run the above commands in sequence
 
-5.We will run the docker compose command which will initiate all the containers and volumes needed and will startup the project
+5. We will run the docker compose command which will initiate all the containers and volumes needed and will startup the project
 
 ``````````````````````
 docker-compose build
@@ -50,6 +50,7 @@ STREAMLIT_URL = <To be taken from README.md>
 ```````````````````````````````````````````````
 
 **Folder Structure:**
+
 ./streamlit
 This folder contains the web application files.
 
@@ -67,6 +68,7 @@ this folder contains code for airflow DAG for processing audio files and convert
         
         
 **Declaration**
+
 Contribution
 
 Anandita Deb : 25%
