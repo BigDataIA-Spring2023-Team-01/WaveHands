@@ -80,7 +80,7 @@ async def combine_videos(videos: Videos,current_user: jwt.User = jwt.Depends(jwt
     for video in video_list:
         file_path = f"data/{videos.sign_language}/{video}.mp4"
         clip = VideoFileClip(file_path)
-        clip = clip.resize((1280, 720))  # resize to 720p
+        clip = clip.resize((640, 360))  # resize to 360p
         clips.append(clip)
 
     result_clip = concatenate_videoclips(clips)
@@ -88,7 +88,7 @@ async def combine_videos(videos: Videos,current_user: jwt.User = jwt.Depends(jwt
     result_clip_path = local_save_path + result_clip_name
 
     # Save the final video locally
-    result_clip.write_videofile(result_clip_path)
+    result_clip.write_videofile(result_clip_path,fps=10)
 
     s3key = "final_video_output/"+result_clip_name
  

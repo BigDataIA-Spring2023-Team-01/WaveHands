@@ -62,9 +62,9 @@ def check_current_user(**kwargs):
     word_book_limit = c.execute(f"SELECT word_book FROM plan_details WHERE plan=?", (plan,)).fetchone()
 
     current_word_book_usage,word_book_lastused = c.execute(f"SELECT word_book_currentcount,word_book_lastused FROM user_current_usage WHERE username=?", (username,)).fetchone()
-    word_book_lastused_tz = datetime.strptime(word_book_lastused, '%Y-%m-%d %H:%M:%S').replace(tzinfo=tz)
+    db_time = datetime.strptime(word_book_lastused, '%Y-%m-%d %H:%M:%S.%f%z').astimezone(tz)
 
-    is_within_last_hour = (datetime.now(tz) - word_book_lastused_tz) < timedelta(hours=1)
+    is_within_last_hour = (datetime.now(tz) - db_time) < timedelta(hours=1)
     
     if(not is_within_last_hour):
         c.execute(f"UPDATE user_current_usage SET word_book_currentcount = 0 WHERE username=?", (username,))    
@@ -84,7 +84,7 @@ def update_user_count(**kwargs):
     username = result['username']
     tz = pytz.timezone('US/Eastern')
     conn = sqlite3.connect('/opt/airflow/users.db')
-    now = datetime.datetime.now(tz)
+    now = datetime.now(tz)
 
 
     c = conn.cursor()   
@@ -169,7 +169,7 @@ task1 = PythonOperator(task_id='read_from_s3', python_callable=read_from_s3, dag
 task2 = PythonOperator(task_id='write_to_s3', python_callable=write_to_s3, dag=dag, op_kwargs={'transcript': "{{ ti.xcom_pull(task_ids='read_from_s3') }}"})
 task3 = PythonOperator(task_id='video_ids', python_callable=video_ids, dag=dag, op_kwargs={'transcript': "{{ ti.xcom_pull(task_ids='read_from_s3') }}"})
 task4 = PythonOperator(task_id='merge_videos', python_callable=merge_videos, dag=dag, op_kwargs={'video_list': "{{ ti.xcom_pull(task_ids='video_ids') }}"})
-complete = DummyOperator(task_id="complete", trigger_rule=TriggerRule.NONE_FAILED)
+complete = DummyOperator(task_id="complete", trigger_rule=TriggerRule.NONE_FAILED,dag=dag)
 BranchTask = BranchPythonOperator(task_id="check_current_user", python_callable=check_current_user,dag=dag)
 update_user_count_task = PythonOperator(task_id='update_user_count', python_callable=update_user_count, dag=dag)
 limit_reached_task = PythonOperator(task_id='limit_reached', python_callable=limit_reached, dag=dag)

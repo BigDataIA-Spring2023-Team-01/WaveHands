@@ -18,8 +18,11 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY')
 UPLOAD_DIR = "data/audio_files/raw_input"
 if not os.path.exists(UPLOAD_DIR):
             os.makedirs(UPLOAD_DIR)
+AIRFLOW_URL = os.environ.get("AIRFLOW_URL")
 AIRFLOW_USERNAME = os.environ.get('AIRFLOW_USERNAME')
 AIRFLOW_PASSWORD = os.environ.get('AIRFLOW_PASSWORD')
+dag_id = 'sign_conversion'
+task_id = 'merge_videos'
 s3client = boto3.client('s3',region_name='us-east-1',
                         aws_access_key_id = AWS_ACCESS_KEY_ID,
                         aws_secret_access_key = AWS_SECRET_ACCESS_KEY)
@@ -28,7 +31,7 @@ ALLOWED_SIGN_LANGUAGES = ["ASL","ISL","BSL"]
 #Setting up functions
 
 def triggerDAG(filename:str):
-    url = os.environ.get("AIRFLOW_URL")
+    url = AIRFLOW_URL
     auth = (AIRFLOW_USERNAME, AIRFLOW_PASSWORD)
     headers = {"Content-Type": "application/json"}
     jwttoken =st.session_state['access_token']
@@ -38,7 +41,28 @@ def triggerDAG(filename:str):
 
     return response.status_code
 
+def check_status_task():
+    try:
 
+        auth = (AIRFLOW_USERNAME, AIRFLOW_PASSWORD)
+        requests.get(url=f'{AIRFLOW_URL}/dags/{dag_id}/dagRuns',auth=auth)
+        dag_run_id = response.json()["dag_runs"][0]['dag_run_id']
+
+        response = requests.get(url=f'{AIRFLOW_URL}/dags/{dag_id}/dagRuns/{dag_run_id}/taskInstances/{task_id}',auth=auth)
+        task_status = response.json()['state']
+    except:
+        task_status = "Faied to get status"
+    return task_status
+
+if "button_clicked" not in st.session_state:    
+    st.session_state.button_clicked = False
+
+def callback():
+    st.session_state.button_clicked = True
+
+
+
+#------------------------------------------------------------------------------------------------------------------
 
 def main():
 
@@ -53,9 +77,9 @@ def main():
 
             uploaded_file = st.file_uploader("Upload an audio file (mp3, mp4, m4a)", type=["mp3", "mp4", "m4a"])
             sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
-            upload = st.button('Upload file')
+            upload = st.button('Upload file',on_click=callback)
 
-            if upload and sign_language:
+            if (upload or st.session_state.button_clicked) and sign_language:
                 #Adding sign language(ASL/ISL/BSL) to the end of file name
                 file_name = uploaded_file.name.split(".")[0] + "_"+ sign_language + "." +uploaded_file.name.split(".")[1]
                 s3_key = f'raw_input/{file_name}'
@@ -72,8 +96,7 @@ def main():
                 status = triggerDAG(file_name)
                 if status == 200:
                     st.write("DAG Triggered")
-                    # if st.button("Check status"):
-                        
+                
 
             else:
                 st.warning("Please upload a file and select the language to translate to")
