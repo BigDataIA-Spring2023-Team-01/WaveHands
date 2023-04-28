@@ -51,8 +51,9 @@ def check_answers(set_path, user_input):
 def get_current_user_calls():
     conn = sqlite3.connect("data/users.db")
     c = conn.cursor()
-    count = c.execute("SELECT word_book_currentcount from user_current_usage where username = ?",(username,)).fetchall()
-    username = st.session_state.user
+    user = st.session_state.user
+
+    count = c.execute("SELECT word_book_currentcount from user_current_usage where username = ?",(user,)).fetchall()
     st.session_state.current_remaining_calls = count[0]
     st.write(f"Current API Counter:{st.session_state.current_remaining_calls[0]}")
     if(int(count[0][0]) > 2):
