@@ -133,7 +133,8 @@ dmypy.json
 # Custom
 data/kaggledataset
 data/temp
-data/ASL
+data/ASL/
+data/audio_files
 videos
 starry-folder-384401-d1659e74c9f0.json
 .testvenv

@@ -78,6 +78,8 @@ def login():
             res = response.json()
             access_token = res['access_token']
             st.session_state['access_token'] = access_token
+            st.session_state['username'] = username
+
             st.success("Logged in as {}".format(username))
         elif response.status_code == 401:
             st.error("Incorrect username or password")

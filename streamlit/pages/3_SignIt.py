@@ -7,7 +7,7 @@ import requests
 from dotenv import load_dotenv
 import boto3
 from pytube import YouTube
-
+import sqlite3
 load_dotenv()
 
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -27,6 +27,8 @@ s3client = boto3.client('s3',region_name='us-east-1',
                         aws_access_key_id = AWS_ACCESS_KEY_ID,
                         aws_secret_access_key = AWS_SECRET_ACCESS_KEY)
 ALLOWED_SIGN_LANGUAGES = ["ASL","ISL","BSL"]
+if "current_remaining_calls" not in st.session_state:
+    st.session_state.current_remaining_calls = 0
 #-------------------------------------------------------------------------------------------------------------------------------
 #Setting up functions
 
@@ -60,7 +62,14 @@ if "button_clicked" not in st.session_state:
 def callback():
     st.session_state.button_clicked = True
 
-
+def get_current_user_calls():
+    conn = sqlite3.connect("data/users.db")
+    username = st.session_state.username
+    c = conn.cursor()
+    count = c.execute("SELECT word_book_currentcount from user_current_usage where username = ?",(username,)).fetchall()
+    st.session_state.current_remaining_calls = int(count)
+    conn.commit()
+    conn.close()
 
 #------------------------------------------------------------------------------------------------------------------
 
@@ -68,6 +77,10 @@ def main():
 
     st.title("SignIt:wind_blowing_face::ok_hand:")
     st.header("Upload an audio file or Paste a youtube link")
+    remaining_api_calls = 1
+    get_current_user_calls()
+    st.write("Remaining API Calls:", st.session_state.current_remaining_calls)
+    
     col1, col2 = st.columns(2)
     with col1:
         source = st.radio("Select audio source", ("Upload file", "Enter Youtube link"))
@@ -96,6 +109,8 @@ def main():
                 status = triggerDAG(file_name)
                 if status == 200:
                     st.write("DAG Triggered")
+                    st.session_state.current_remaining_calls = st.session_state.current_remaining_calls + 1
+
                 
 
             else:
@@ -140,7 +155,7 @@ def main():
             video_url = s3client.generate_presigned_url(ClientMethod='get_object',Params={'Bucket': wavehands_bucket, 'Key':f"{k}{option}"},ExpiresIn=3600)
 
             st.video(video_url)
-        print(option)
+
 
 if __name__ == "__main__":
     if st.session_state.get('access_token'):
