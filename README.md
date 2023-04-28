@@ -1,4 +1,6 @@
 **WaveHands**
+
+
 **Bridging the gap between the deaf and hearing world**
 Although sign language is an effective means of communication, not everyone is familiar with it. Likewise, communicating with the hearing world might be difficult for those who are deaf or hard of hearing. 
 WaveHands is a web application that utilizes advanced algorithms and machine learning to help bridge the communication gap between different communities. Specifically, it is designed to cater to the needs of the hearing-impaired community, making it easier for them to access and understand various forms of media.
