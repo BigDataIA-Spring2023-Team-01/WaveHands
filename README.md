@@ -50,8 +50,22 @@ Note: This assumes that you have docker desktop installed in your machine, if no
 In order to execute the project you would also need to make a .env file with the following requirements
 
 ```````````````````````````````````````````````
-OPENAI_SECRET_KEY = <Your Whisper API Key>
-STREAMLIT_URL = <To be taken from README.md>
+AIRFLOW_UID = 
+AIRFLOW_GID = 
+AIRFLOW_USERNAME = 
+AIRFLOW_PASSWORD = 
+AIRFLOW_URL = 
+
+AWS_ACCESS_KEY = 
+AWS_SECRET_KEY = 
+WAVEHANDS_BUCKET = 
+
+OPENAI_SECRET_KEY = 
+
+API_URL = 
+
+JWT_SECRET_KEY = 
+
 ```````````````````````````````````````````````
 
 **Folder Structure:**
