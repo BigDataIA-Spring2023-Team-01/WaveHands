@@ -13,7 +13,7 @@ COPY . .
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-RUN apt install ffmpeg
+RUN apt-get update && apt-get install -y ffmpeg
 
 EXPOSE 8501
 

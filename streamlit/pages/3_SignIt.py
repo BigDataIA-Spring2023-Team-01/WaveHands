@@ -9,6 +9,7 @@ import boto3
 from pytube import YouTube
 import sqlite3
 import yt_dlp
+import time
 
 load_dotenv()
 
@@ -28,6 +29,11 @@ task_id = 'merge_videos'
 s3client = boto3.client('s3',region_name='us-east-1',
                         aws_access_key_id = AWS_ACCESS_KEY_ID,
                         aws_secret_access_key = AWS_SECRET_ACCESS_KEY)
+clientLogs = boto3.client('logs',
+                        region_name='us-east-1',
+                        aws_access_key_id = os.environ.get('AWS_LOG_ACCESS_KEY'),
+                        aws_secret_access_key = os.environ.get('AWS_LOG_SECRET_KEY')
+                        )
 ALLOWED_SIGN_LANGUAGES = ["ASL","ISL","BSL"]
 if "current_remaining_calls" not in st.session_state:
     st.session_state.current_remaining_calls = 0
@@ -42,7 +48,15 @@ def triggerDAG(filename:str):
     data = {"conf": {"filename": filename,"token":jwttoken}}
 
     response = requests.post(url, headers=headers, json=data, auth=auth)
-
+    clientLogs.put_log_events(      
+                logGroupName = "wavehands",
+                logStreamName = "streamlit",
+                logEvents = [
+                    {
+                    'timestamp' : int(time.time() * 1e3),
+                    'message' : "Sign conversion DAG Triggered"
+                    }
+                ])
     return response.status_code
 
 def check_status_task():
@@ -117,6 +131,16 @@ def main():
                     f.write(uploaded_file.read())
 
                 st.success("File Uploaded successfully!")
+                #logging to AWS CloudWatch logs
+                clientLogs.put_log_events(      
+                logGroupName = "wavehands",
+                logStreamName = "streamlit",
+                logEvents = [
+                    {
+                    'timestamp' : int(time.time() * 1e3),
+                    'message' : "New user Signed up"
+                    }
+                ])
                 st.audio(uploaded_file)
                 
                 # Pass the contents of the file as bytes using the read() method

@@ -8,13 +8,19 @@ from dotenv import load_dotenv
 import os
 from fastapi import Form
 import re
+import time
+import boto3
 load_dotenv()
 
 #------------------------------------------------------------------------------------------------------------------------------
 #                                       Variable Definitions
 #-------------------------------------------------------------------------------------------------------------------------------
 API_URL = os.environ.get('API_URL')
-
+clientLogs = boto3.client('logs',
+                        region_name='us-east-1',
+                        aws_access_key_id = os.environ.get('AWS_LOG_ACCESS_KEY'),
+                        aws_secret_access_key = os.environ.get('AWS_LOG_SECRET_KEY')
+                        )
 #------------------------------------------------------------------------------------------------------------------------------
 #                                       Function Definitions
 #-------------------------------------------------------------------------------------------------------------------------------
@@ -58,6 +64,17 @@ def signup():
         url = API_URL + "register"
         response = requests.post(url, json={"username": username, "password": password, "plan": plan})
         if response.status_code == 200:
+            #logging to AWS CloudWatch logs
+            clientLogs.put_log_events(      
+            logGroupName = "wavehands",
+            logStreamName = "streamlit",
+            logEvents = [
+                {
+                'timestamp' : int(time.time() * 1e3),
+                'message' : "New user Signed up"
+                }
+            ]
+        )
             st.success("User registered successfully")
         elif response.status_code == 400:
             st.warning("User already registered")
@@ -81,6 +98,16 @@ def login():
             st.session_state['user'] = username
 
             st.success("Logged in as {}".format(username))
+            clientLogs.put_log_events(      
+            logGroupName = "wavehands",
+            logStreamName = "streamlit",
+            logEvents = [
+                {
+                'timestamp' : int(time.time() * 1e3),
+                'message' : f"{username} Logged in "
+                }
+            ]
+        )
         elif response.status_code == 401:
             st.error("Incorrect username or password")
 
@@ -90,6 +117,16 @@ def logout():
     if st.button("Logout"):
 
         st.session_state['access_token']= ''
+        clientLogs.put_log_events(      
+            logGroupName = "wavehands",
+            logStreamName = "streamlit",
+            logEvents = [
+                {
+                'timestamp' : int(time.time() * 1e3),
+                'message' : "User Logged out"
+                }
+            ]
+        )
         st.success("Successfully logged out. Please log back in to use the website.")
 
 def change_password():
@@ -101,6 +138,16 @@ def change_password():
         response = requests.put(url, json={"username": username, "password": new_password, "confirm_password": confirm_password})
 
         if response.status_code == 200:
+            clientLogs.put_log_events(      
+            logGroupName = "wavehands",
+            logStreamName = "streamlit",
+            logEvents = [
+                {
+                'timestamp' : int(time.time() * 1e3),
+                'message' : f"USER:{username} Changed his password"
+                }
+            ]
+        )
             st.success("Password updated successfully.")
         elif response.status_code == 400:
             st.error("Password and confirm password not the same.")
