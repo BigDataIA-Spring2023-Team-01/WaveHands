@@ -17,7 +17,7 @@ def main():
     st.title("HandSpeak")
     options = ['American Sign Language', 'Indian Sign Language']
     selected_option = st.selectbox('Select an option', options)
-    img = st.camera_input("Capture a sign language")
+    img = st.file_uploader("Capture a sign language")
     if st.button("Check sign"):
         img1 = Image.open(img)
 
