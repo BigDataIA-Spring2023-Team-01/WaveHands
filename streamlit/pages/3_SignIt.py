@@ -64,10 +64,10 @@ def callback():
 
 def get_current_user_calls():
     conn = sqlite3.connect("data/users.db")
-    username = st.session_state.username
+    username = st.session_state.user
     c = conn.cursor()
     count = c.execute("SELECT word_book_currentcount from user_current_usage where username = ?",(username,)).fetchall()
-    st.session_state.current_remaining_calls = int(count)
+    st.session_state.current_remaining_calls = int(count[0])
     conn.commit()
     conn.close()
 
@@ -118,13 +118,14 @@ def main():
 
         elif source == "Enter Youtube link":
             youtube_link = st.text_input('Paste the youtube link here', 'www.youtube.com/xxx')
+            file_name = st.text_input('Enter a file name for the link','Default')
+
             sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
             upload = st.button('Upload file')
             if upload and sign_language:
                 # Download the YouTube video
                 yt = YouTube(youtube_link)
                 audio_stream = yt.streams.filter(only_audio=True).first()
-                file_name = st.text_input('Enter a file name for the link','Default')
                 
 
                 # Save the audio file with a given name
