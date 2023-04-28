@@ -108,7 +108,7 @@ def main():
             sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
             upload = st.button('Upload file',on_click=callback)
 
-            if (upload or st.session_state.button_clicked) and sign_language:
+            if (upload and sign_language):
                 #Adding sign language(ASL/ISL/BSL) to the end of file name
                 file_name = uploaded_file.name.split(".")[0] + "_"+ sign_language + "." +uploaded_file.name.split(".")[1]
                 s3_key = f'raw_input/{file_name}'
