@@ -7,16 +7,14 @@ WaveHands is a web application that utilizes advanced algorithms and machine lea
 
 Documentation : https://codelabs-preview.appspot.com/?file_id=1smHQI2--0jZQxkKMPynGA90ml7u-kTS-5YTe-TA1c4I/edit#0
 
-Application Links : 
-    Streamlit : http://34.136.86.232:8501/
-    
-    FastAPI : http://34.136.86.232:8000/docs
-    
-    Airflow : http://34.136.86.232:8080
+Application Links :
 
-Streamlit : 
+Streamlit : http://34.136.86.232:8501/
+    
+FastAPI : http://34.136.86.232:8000/docs
+    
+Airflow : http://34.136.86.232:8080
 
-Fast API: 
 
 **Project Execution**
 The Git repository contains all the necessary resources for this project. 
