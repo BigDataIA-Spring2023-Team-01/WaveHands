@@ -9,7 +9,9 @@ Documentation : https://codelabs-preview.appspot.com/?file_id=1smHQI2--0jZQxkKMP
 
 Application Links : 
     Streamlit : http://34.136.86.232:8501/
+    
     FastAPI : http://34.136.86.232:8000/docs
+    
     Airflow : http://34.136.86.232:8080
 
 Streamlit : 
